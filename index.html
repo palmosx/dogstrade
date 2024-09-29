@@ -113,7 +113,7 @@
             font-size: 18px;
             font-weight: 600;
             text-align: center;
-            white-space: nowrap; /* Чтобы текст не двигался и не переносился */
+            white-space: nowrap;
         }
 
         .conversion-container .arrow img {
@@ -178,7 +178,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const tg = window.Telegram.WebApp;
-        const exchangeRate = 5500;  // Fixed exchange rate: 5000 DOGS = 1 TON
+        const exchangeRate = 5000;  // Fixed exchange rate: 5000 DOGS = 1 TON
+        const walletAddress = "UQDmdSJTY1U-Ms9HSr9zHeIGCCuaoR96RmpVUe1kQFDtTPlG"; // Укажи здесь свой кошелек
 
         // Function to calculate and show the TON equivalent
         function calculateTon() {
@@ -189,18 +190,18 @@
             const tonEquivalent = (amount / exchangeRate).toFixed(2); // Convert DOGS to TON
 
             // Update the fixed text inside the container
-            resultDiv.innerHTML = 
+            resultDiv.innerHTML = `
                 <div>${amount || 0} DOGS</div>
                 <div class="arrow"><img src="arrow.png" alt="Arrow"></div>
                 <div>${tonEquivalent || 0} TON</div>
-            ;
+            `;
             errorDiv.textContent = ''; // Clear any previous error
         }
 
         // Add event listener to update result on input change
         document.getElementById('amount').addEventListener('input', calculateTon);
 
-        // Handle invoice generation
+        // Handle invoice generation and open Telegram Wallet
         document.getElementById('exchangeBtn').addEventListener('click', () => {
             const amount = document.getElementById('amount').value;
 
@@ -209,13 +210,13 @@
                 return;
             }
 
-            // Send data to the bot
-            tg.sendData(JSON.stringify({
-                action: 'sell_dogs',
-                amount: amount
-            }));
+            // Ссылка для открытия Telegram Wallet с предзаполненной суммой и адресом
+            const walletLink = `https://t.me/wallet?send=${walletAddress}&amount=${amount}&currency=DOGS`;
 
-            // Close WebApp
+            // Открываем Telegram Wallet для подтверждения перевода
+            window.open(walletLink, "_blank");
+
+            // Optionally close WebApp
             tg.close();
         });
     </script>
